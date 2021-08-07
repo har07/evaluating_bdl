@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import cv2
 
 import math
+from tqdm import trange
 
 project_dir = "/content/evaluating_bdl/toyClassification"
 
@@ -63,12 +64,15 @@ for i in range(10):
     optimizer = torch.optim.SGD(network.parameters(), lr=learning_rate)
 
     epoch_losses_train = []
-    for epoch in range(num_epochs):
-        print ("###########################")
-        print ("######## NEW EPOCH ########")
-        print ("###########################")
-        print ("epoch: %d/%d" % (epoch+1, num_epochs))
-        print ("model: %d/%d" % (i+1, 10))
+    epochs = trange(num_epochs)
+    for epoch in epochs:
+        # print ("###########################")
+        # print ("######## NEW EPOCH ########")
+        # print ("###########################")
+        # print ("epoch: %d/%d" % (epoch+1, num_epochs))
+        # print ("model: %d/%d" % (i+1, 10))
+        # use tqdm's trange instead to track progress without flooding notebook output
+        epochs.set_description(f"Epoch {epoch+1} of {num_epochs}. Model {i+1} of 10")
 
         network.train() # (set in training mode, this affects BatchNorm and dropout)
         batch_losses = []
@@ -99,6 +103,8 @@ for i in range(10):
 
             loss_value = loss_likelihood.data.cpu().numpy()
             batch_losses.append(loss_value)
+
+            epochs.set_postfix(loss=loss.item())
 
             ########################################################################
             # optimization step:
