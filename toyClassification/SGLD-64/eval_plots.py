@@ -20,6 +20,8 @@ import cv2
 
 import numpy as np
 
+base_dir = "/content"
+
 L = 64
 num_epochs = L*150
 
@@ -45,8 +47,8 @@ for M in M_values:
         for i in range(M):
             print (int(num_epochs - i*step_size))
 
-            network = ToyNet("eval_SGLD-64_1-10", project_dir="/root/evaluating_bdl/toyClassification").cuda()
-            network.load_state_dict(torch.load("/root/evaluating_bdl/toyClassification/training_logs/model_SGLD-64_%d/checkpoints/model_SGLD-64_%d_epoch_%d.pth" % (iter+1, iter+1, int(num_epochs - i*step_size))))
+            network = ToyNet("eval_SGLD-64_1-10", project_dir=base_dir + "/evaluating_bdl/toyClassification").cuda()
+            network.load_state_dict(torch.load(base_dir + "/evaluating_bdl/toyClassification/training_logs/model_SGLD-64_%d/checkpoints/model_SGLD-64_%d_epoch_%d.pth" % (iter+1, iter+1, int(num_epochs - i*step_size))))
             networks.append(network)
 
         M_float = float(len(networks))

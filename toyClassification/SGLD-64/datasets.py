@@ -14,14 +14,16 @@ import matplotlib.pyplot as plt
 
 import pickle
 
+base_dir = "/content"
+
 class ToyDataset(torch.utils.data.Dataset):
     def __init__(self):
         self.examples = []
 
-        with open("/root/evaluating_bdl/toyClassification/x.pkl", "rb") as file: # (needed for python3)
+        with open(base_dir + "/evaluating_bdl/toyClassification/x.pkl", "rb") as file: # (needed for python3)
             x = pickle.load(file) # (shape: (2000, 2))
 
-        with open("/root/evaluating_bdl/toyClassification/y.pkl", "rb") as file: # (needed for python3)
+        with open(base_dir + "/evaluating_bdl/toyClassification/y.pkl", "rb") as file: # (needed for python3)
             y = pickle.load(file) #  (shape: (2000, ))
 
         x_1_train = []
@@ -49,7 +51,7 @@ class ToyDataset(torch.utils.data.Dataset):
         plt.xlabel("x_1")
         plt.xlim([-3, 3])
         plt.ylim([-3, 3])
-        plt.savefig("/root/evaluating_bdl/toyClassification/SGLD-64/training_data.png")
+        plt.savefig(base_dir + "/evaluating_bdl/toyClassification/SGLD-64/training_data.png")
         plt.close(1)
 
         for i in range(x_train.shape[0]):

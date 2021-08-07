@@ -20,6 +20,8 @@ import cv2
 
 import math
 
+project_dir = "/content/evaluating_bdl/toyClassification"
+
 for i in range(10):
     # NOTE! change this to not overwrite all log data when you train the model:
     model_id = "SGLD-64_%d" % (i + 1)
@@ -56,7 +58,7 @@ for i in range(10):
 
     train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
 
-    network = ToyNet(model_id, project_dir="/root/evaluating_bdl/toyClassification").cuda()
+    network = ToyNet(model_id, project_dir=project_dir).cuda()
 
     optimizer = torch.optim.SGD(network.parameters(), lr=learning_rate)
 
