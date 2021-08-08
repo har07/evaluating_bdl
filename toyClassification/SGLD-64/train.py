@@ -19,16 +19,24 @@ import matplotlib.pyplot as plt
 import cv2
 
 import math
-from tqdm import trange
+import argparse
+from tqdm.notebook import trange
 
 project_dir = "/content/evaluating_bdl/toyClassification"
 
-for i in range(10):
+parser = argparse.ArgumentParser(
+                    description="Trains models using Bayesian Deep Learning methods")
+parser.add_argument("-i", "--iter",
+                    help="continue training from iteration i", default=0)
+args = parser.parse_args()
+start_iter = int(args.iter)
+
+for i in trange(start_iter, 6, desc='iteration', position=0):
     # NOTE! change this to not overwrite all log data when you train the model:
     model_id = "SGLD-64_%d" % (i + 1)
 
     L = 64
-    print ("L: %d" % L)
+    # print ("L: %d" % L)
 
     num_epochs = L*150
     batch_size = 32
@@ -48,12 +56,12 @@ for i in range(10):
 
     train_dataset = ToyDataset()
     N = float(len(train_dataset))
-    print (N)
+    # print (N)
 
     alpha = 1.0
 
     num_train_batches = int(len(train_dataset)/batch_size)
-    print ("num_train_batches:", num_train_batches)
+    # print ("num_train_batches:", num_train_batches)
 
     num_steps = num_epochs*num_train_batches + 1
 
@@ -64,15 +72,7 @@ for i in range(10):
     optimizer = torch.optim.SGD(network.parameters(), lr=learning_rate)
 
     epoch_losses_train = []
-    epochs = trange(num_epochs)
-    for epoch in epochs:
-        # print ("###########################")
-        # print ("######## NEW EPOCH ########")
-        # print ("###########################")
-        # print ("epoch: %d/%d" % (epoch+1, num_epochs))
-        # print ("model: %d/%d" % (i+1, 10))
-        # use tqdm's trange instead to track progress without flooding notebook output
-        epochs.set_description(f"Epoch {epoch+1} of {num_epochs}. Model {i+1} of 10")
+    for epoch in trange(num_epochs, desc='epoch', position=1, leave=False):
 
         network.train() # (set in training mode, this affects BatchNorm and dropout)
         batch_losses = []
@@ -104,8 +104,6 @@ for i in range(10):
             loss_value = loss_likelihood.data.cpu().numpy()
             batch_losses.append(loss_value)
 
-            epochs.set_postfix(loss=loss.item())
-
             ########################################################################
             # optimization step:
             ########################################################################
@@ -117,7 +115,7 @@ for i in range(10):
         epoch_losses_train.append(epoch_loss)
         with open("%s/epoch_losses_train.pkl" % network.model_dir, "wb") as file:
             pickle.dump(epoch_losses_train, file)
-        print ("train loss: %g" % epoch_loss)
+        # print ("train loss: %g" % epoch_loss)
         plt.figure(1)
         plt.plot(epoch_losses_train, "k^")
         plt.plot(epoch_losses_train, "k")
@@ -127,7 +125,7 @@ for i in range(10):
         plt.savefig("%s/epoch_losses_train.png" % network.model_dir)
         plt.close(1)
 
-        print ("lr: %g" % lr)
+        # print ("lr: %g" % lr)
 
         # save the model weights to disk:
         checkpoint_path = network.checkpoints_dir + "/model_" + model_id +"_epoch_" + str(epoch+1) + ".pth"

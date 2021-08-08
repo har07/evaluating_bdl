@@ -17,6 +17,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import cv2
+from tqdm.notebook import tqdm, trange
 
 base_dir = "/content"
 
@@ -57,31 +58,32 @@ for index, value in enumerate(x_values):
     if value < -3:
         x_2_train_lower = index+1
 
-print (x_1_train_lower)
-print (x_values[x_1_train_lower])
-print (x_1_train_upper)
-print (x_values[x_1_train_upper])
-print (x_2_train_lower)
-print (x_values[x_2_train_lower])
-print (x_2_train_upper)
-print (x_values[x_2_train_upper])
+# print (x_1_train_lower)
+# print (x_values[x_1_train_lower])
+# print (x_1_train_upper)
+# print (x_values[x_1_train_upper])
+# print (x_2_train_lower)
+# print (x_values[x_2_train_lower])
+# print (x_2_train_upper)
+# print (x_values[x_2_train_upper])
 
 p_HMC_train = p_HMC[x_2_train_lower:x_2_train_upper, x_1_train_lower:x_1_train_upper] # (shape: (29, 14))
 p_HMC_train = p_HMC_train/np.sum(p_HMC_train)
 
-M_values = [2, 4, 8, 16, 32, 64, 128, 256, 512]
+M_values = tqdm([2, 4, 8, 16, 32, 64, 128, 256, 512], position=0)
 for M in M_values:
-    print (M)
+    M_values.set_description(f"Combination of {M} models")
+    # print (M)
 
     step_size = float(num_epochs - num_epochs_low)/float(M-1)
-    print (step_size)
+    # print (step_size)
 
     if (step_size < 1):
         break
 
     KL_p_HMC_q_total_values = []
     KL_p_HMC_q_train_values = []
-    for j in range(10):
+    for j in trange(5, desc='iteration', position=1, leave=False):
         networks = []
         for i in range(M):
             #print (int(num_epochs - i*step_size))
@@ -91,7 +93,7 @@ for M in M_values:
             networks.append(network)
 
         M_float = float(len(networks))
-        print (M_float)
+        # print (M_float)
 
         for network in networks:
             network.eval()
