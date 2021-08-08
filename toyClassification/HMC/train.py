@@ -29,6 +29,12 @@ for step, (x, y) in enumerate(train_loader):
     nuts_kernel = NUTS(model, jit_compile=False,)
     posterior = MCMC(nuts_kernel, num_samples=1000, warmup_steps=1000, num_chains=1).run(x, y) # num_samples=1000, warmup_steps=1000
 
+    # Apa ganti EmpiricalMarginal()._get_samples_and_weights() di pyro versi baru? katanya pake mcmc.get_samples() tapi.. ?
+    # https://forum.pyro.ai/t/assertionerror-trace-dist-must-be-trace-posterior-distribution-object/1528/3
+    # https://github.com/pyro-ppl/pyro/issues/2694
+    # mcmc = MCMC(nuts_kernel, num_samples=1000, warmup_steps=1000, num_chains=1)
+    # mcmc.run(x, y) # num_samples=1000, warmup_steps=1000
+
     fc1_weight_samples = EmpiricalMarginal(posterior, sites=["module$$$fc1.weight"])._get_samples_and_weights()[0].cpu().numpy() # (shape: (num_samples, 1, shape1, shape2))
     fc1_bias_samples = EmpiricalMarginal(posterior, sites=["module$$$fc1.bias"])._get_samples_and_weights()[0].cpu().numpy() # (shape: (num_samples, 1, shape1, shape2))
 

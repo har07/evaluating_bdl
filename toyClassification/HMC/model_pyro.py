@@ -9,7 +9,8 @@ import torch.nn.functional as F
 
 from model_pytorch import ToyNet
 
-det_net = ToyNet("HMC", project_dir="/root/evaluating_bdl/toyClassification").cuda()
+project_dir = "/content/evaluating_bdl/toyClassification"
+det_net = ToyNet("HMC", project_dir=project_dir).cuda()
 
 def model(x, y):
     fc1_weight_prior = pyro.distributions.Normal(loc=torch.zeros_like(det_net.fc1.weight), scale=torch.ones_like(det_net.fc1.weight))
